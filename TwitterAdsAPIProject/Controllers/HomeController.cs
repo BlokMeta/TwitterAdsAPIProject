@@ -10,22 +10,30 @@ namespace TwitterAdsAPIProject.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _config;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration config)
         {
             _logger = logger;
+            _config = config;
         }
 
         // Aşağıdaki Action methodu, bir sayfada Twitter Ads API tarafından dönen verileri gösterir
         // (henüz sadece Twitter API için, ad bilgilerimiz mevcut değil.
         public async Task<IActionResult> Index()
         {
+
+            
             // API endpoint'ine gönderilecek URL
-            string apiUrl = "https://api.twitter.com/2/users/291676449/followers";
+            //string apiUrl = "https://api.twitter.com/2/users/291676449/followers";
+
+            string apiUrl = _config.GetSection("TwitterAPIConnections:apiUrl").Value;
+            string bearerKey = _config.GetSection("TwitterAPIConnections:bearerKey").Value;
+
 
             // HTTP isteği oluşturuyoruz
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer AAAAAAAAAAAAAAAAAAAAABRokwEAAAAAbF56KsqxkypAeQTBoa5KTHX30jE%3Dy4yDI8QiioYVM8eQvvZoGuRPrd6ZT9njGK427afGcJ2a4m6dNn");
+            client.DefaultRequestHeaders.Add("Authorization", bearerKey);
 
             // API'ye istek gönderiyoruz
             HttpResponseMessage response = await client.GetAsync(apiUrl);
